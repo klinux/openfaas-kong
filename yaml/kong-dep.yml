@@ -128,7 +128,7 @@ spec:
      paths:
      - path: /
        backend:
-        serviceName: proxy
+        serviceName: kong-proxy
         servicePort: 8000
 
 ---
@@ -144,5 +144,5 @@ spec:
      paths:
      - path: /
        backend:
-        serviceName: admin
+        serviceName: kong-admin
         servicePort: 8001
