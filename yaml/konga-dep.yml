@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: konga-svc
+  namespace: openfaas
+spec:
+  type: ClusterIP
+  ports:
+  - name: kong-svc
+    port: 1337
+    targetPort: 1337
+    protocol: TCP
+  selector:
+    app: konga
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: konga
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        name: konga
+        app: konga
+      namespace: openfaas
+    spec:
+      containers:
+      - name: konga
+        image: pantsel/konga
+        env:
+          - name: TOKEN_SECRET
+            value: "05a8d106c70fa9eabee35b25a4fa9d85"
+          - name: DB_ADAPTER
+            value: postgres
+          - name: DB_HOST
+            value: postgres
+          - name: DB_PORT
+            value: 5432
+          - name: DB_USER
+            value: kong
+          - name: DB_PASSWORD
+            value: kong
+          - name: DB_DATABASE
+            value: postgres
+          - name: NODE_ENV
+            value: production
+        ports:
+        - name: kong-svc
+          containerPort: 1337
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: konga-portal
+spec:
+  rules:
+  - host: konga.apps.netk.inf.br
+    http:
+     paths:
+     - path: /
+       backend:
+        serviceName: kong-svc
+        servicePort: 1337
