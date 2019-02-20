@@ -11,6 +11,7 @@ spec:
       containers:
       - name: kong-migration
         image: kong
+        imagePullPolicy: IfNotPresent
         env:
           - name: KONG_NGINX_DAEMON
             value: 'off'

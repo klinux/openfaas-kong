@@ -75,9 +75,12 @@ spec:
         name: kong-rc
         app: kong
     spec:
+      securityContext:
+        runAsUser: 1000
       containers:
       - name: kong
         image: kong
+        imagePullPolicy: IfNotPresent
         env:
           - name: KONG_ADMIN_LISTEN
             value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"

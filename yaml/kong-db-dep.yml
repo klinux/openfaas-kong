@@ -28,6 +28,7 @@ spec:
       containers:
         - name: postgres
           image: postgres:9.5
+          imagePullPolicy: IfNotPresent
           env:
             - name: POSTGRES_USER
               value: kong
