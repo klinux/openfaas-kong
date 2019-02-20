@@ -66,6 +66,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: kong-rc
+  namespace: openfaas
 spec:
   replicas: 3
   template:
@@ -73,7 +74,6 @@ spec:
       labels:
         name: kong-rc
         app: kong
-      namespace: openfaas
     spec:
       containers:
       - name: kong
