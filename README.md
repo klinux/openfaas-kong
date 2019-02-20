@@ -31,12 +31,12 @@ kubectl create -f konga-dep.yml
 
 > Note: Ajust the Ingress sections on files, accordly your configurations.
 
-# Configuring OpenFaas Endpoints inside Kong
+## Configuring OpenFaas Endpoints inside Kong
 You can do this task with two ways, command line or through KONGA web interface.
 
 Here you can get with command line to configure endpoits.
 
-Configure "/function" endpoint
+### Configure "/function" endpoint
 
 ```sh
 curl -k -X POST \
@@ -46,7 +46,7 @@ curl -k -X POST \
     --data 'upstream_url=http://gateway:8080/function'
 ```
 
-Configure "/async-function" endpoint
+### Configure "/async-function" endpoint
 
 ```sh
 curl -k -X POST \
@@ -58,11 +58,11 @@ curl -k -X POST \
 
 > The -k options in curl is necessary if you are using self-signed certificates.
 
-# Enable basic authentication
+### Enable basic authentication
 Kong support a lot of authentication methods, like basic, api key, oauth2, jwt etc.  
 To simplify this deploy, we will use basic authentication.
 
-## Enable basic plugin
+### Enable basic plugin
 
 ```sh
 curl -k -X POST https://${INGRESS_ADMIN_URL}/plugins \
@@ -70,13 +70,13 @@ curl -k -X POST https://${INGRESS_ADMIN_URL}/plugins \
     --data "config.hide_credentials=true"
 ```
 
-## Create a cunsumer
+### Create a cunsumer
 
 ```sh
 curl -k -d "username=aladdin" https://${INGRESS_ADMIN_URL}/consumers/
 ```
 
-## Create a credential
+### Create a credential
 
 ```sh
 curl -k -X POST https://${INGRESS_ADMIN_URL}/consumers/aladdin/basic-auth \
@@ -84,7 +84,7 @@ curl -k -X POST https://${INGRESS_ADMIN_URL}/consumers/aladdin/basic-auth \
     --data "password=OpenSesame"
 ```
 
-## Validate configuration
+### Validate configuration
 
 ```sh
 $ curl -k https://${INGRESS_PROXY_URL}/function/func_echoit -d 'hello world'
@@ -102,7 +102,7 @@ $ curl -k https://${INGRESS_PROXY_URL}/function/func_echoit -d 'hello world' \
 hello world
 ```
 
-## Configure the "/ui" endpoint, to access the UI of OpenFaas
+### Configure the "/ui" endpoint, to access the UI of OpenFaas
 
 ```sh
 curl -i -k -X POST \
@@ -119,10 +119,11 @@ curl -i -X POST \
     --data 'uris=/system/functions' \
     --data 'upstream_url=http://gateway:8080/system/functions'
 ```
-## Test Configuration
+### Test Configuration
 Now visit https://${INGRESS_PROXY_URL}/ui/ in your browser where you will be asked for credentials.
 
-# Add SSL, this part, is the same OpenFaas doc [Original](https://github.com/openfaas/faas/blob/master/guide/kong_integration.md) 
+## Add SSL
+> This part, is the same OpenFaas doc [Original](https://github.com/openfaas/faas/blob/master/guide/kong_integration.md) 
 
 Basic authentication does not protect from man in the middle attacks, so lets add SSL to encrypt the communication.
 
@@ -134,7 +135,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
   -subj "/C=US/ST=CA/L=L/O=OrgName/OU=IT Department/CN=example.com"
 ```
 
-Add cert to Kong
+### Add cert to Kong
 
 ```
 kong_admin_curl -X POST http://localhost:8001/certificates \
@@ -145,7 +146,7 @@ HTTP/1.1 201 Created
 ...
 ```
 
-Put the cert in front OpenFaaS
+### Put the cert in front OpenFaaS
 
 ```sh
 kong_admin_curl -i -X POST http://localhost:8001/apis \
@@ -165,7 +166,7 @@ curl -k https://localhost:8443/function/func_echoit \
 hello world
 ```
 
-# Configure your firewall
+## Configure your firewall
 
 Between OpenFaaS and Kong a lot of ports are exposed on your host machine. Most importantly you should hide port 8080 since that is where OpenFaaS's functions live which you were trying to secure in the first place. In the end it is best to only expose either 8000 or 8443 out of your network depending if you added SSL or not.
 
