@@ -73,5 +73,5 @@ spec:
      paths:
      - path: /
        backend:
-        serviceName: kong-svc
+        serviceName: konga-svc
         servicePort: 1337
