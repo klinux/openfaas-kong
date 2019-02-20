@@ -36,3 +36,137 @@ You can do this task with two ways, command line or through KONGA web interface.
 
 Here you can get with command line to configure endpoits.
 
+Configure "/function" endpoint
+
+```sh
+curl -k -X POST \
+    --url https://${INGRESS_ADMIN_URL}/apis/ \
+    --data 'name=function' \
+    --data 'uris=/function' \
+    --data 'upstream_url=http://gateway:8080/function'
+```
+
+Configure "/async-function" endpoint
+
+```sh
+curl -k -X POST \
+    --url https://${INGRESS_ADMIN_URL}/apis/ \
+    --data 'name=async-function' \
+    --data 'uris=/async-function' \
+    --data 'upstream_url=http://gateway:8080/async-function'
+```
+
+> The -k options in curl is necessary if you are using self-signed certificates.
+
+# Enable basic authentication
+Kong support a lot of authentication methods, like basic, api key, oauth2, jwt etc.  
+To simplify this deploy, we will use basic authentication.
+
+## Enable basic plugin
+
+```sh
+curl -k -X POST https://${INGRESS_ADMIN_URL}/plugins \
+    --data "name=basic-auth" \
+    --data "config.hide_credentials=true"
+```
+
+## Create a cunsumer
+
+```sh
+curl -k -d "username=aladdin" https://${INGRESS_ADMIN_URL}/consumers/
+```
+
+## Create a credential
+
+```sh
+curl -k -X POST https://${INGRESS_ADMIN_URL}/consumers/aladdin/basic-auth \
+    --data "username=aladdin" \
+    --data "password=OpenSesame"
+```
+
+## Validate configuration
+
+```sh
+$ curl -k https://${INGRESS_PROXY_URL}/function/func_echoit -d 'hello world'
+{"message":"Unauthorized"}
+
+$ curl -k https://${INGRESS_PROXY_URL}/function/func_echoit -d 'hello world' \
+-H 'Authorization: Basic xxxxxx'
+{"message":"Invalid authentication credentials"}
+
+$ echo -n aladdin:OpenSesame | base64
+YWxhZGRpbjpPcGVuU2VzYW1l
+
+$ curl -k https://${INGRESS_PROXY_URL}/function/func_echoit -d 'hello world' \
+    -H 'Authorization: Basic YWxhZGRpbjpPcGVuU2VzYW1l'
+hello world
+```
+
+## Configure the "/ui" endpoint, to access the UI of OpenFaas
+
+```sh
+curl -i -k -X POST \
+    --url https://${INGRESS_ADMIN_URL}/apis/ \
+    --data 'name=ui' \
+    --data 'uris=/ui' \
+    --data 'upstream_url=http://gateway:8080/ui'
+```
+
+```sh
+curl -i -X POST \
+    --url https://${INGRESS_ADMIN_URL}/apis/ \
+    --data 'name=system-functions' \
+    --data 'uris=/system/functions' \
+    --data 'upstream_url=http://gateway:8080/system/functions'
+```
+## Test Configuration
+Now visit https://${INGRESS_PROXY_URL}/ui/ in your browser where you will be asked for credentials.
+
+# Add SSL, this part, is the same OpenFaas doc [Original](https://github.com/openfaas/faas/blob/master/guide/kong_integration.md) 
+
+Basic authentication does not protect from man in the middle attacks, so lets add SSL to encrypt the communication.
+
+Create a cert. Here in the demo, we are creating selfsigned certs, but in production you should skip this step and use your existing certificates (or get some from Lets Encrypt).
+
+```sh
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /tmp/selfsigned.key -out /tmp/selfsigned.pem \
+  -subj "/C=US/ST=CA/L=L/O=OrgName/OU=IT Department/CN=example.com"
+```
+
+Add cert to Kong
+
+```
+kong_admin_curl -X POST http://localhost:8001/certificates \
+    -F "cert=$(cat /tmp/selfsigned.pem)" \
+    -F "key=$(cat /tmp/selfsigned.key)" \
+    -F "snis=example.com"
+HTTP/1.1 201 Created
+...
+```
+
+Put the cert in front OpenFaaS
+
+```sh
+kong_admin_curl -i -X POST http://localhost:8001/apis \
+    -d "name=ssl-api" \
+    -d "upstream_url=http://gateway:8080" \
+    -d "hosts=example.com"
+HTTP/1.1 201 Created
+...
+```
+
+Verify that the cert is now in use. Note the '-k' parameter is just here to work around the fact that we are using self signed certs.
+
+```sh
+curl -k https://localhost:8443/function/func_echoit \
+  -d 'hello world' -H 'Host: example.com '\
+  -H 'Authorization: Basic YWxhZGRpbjpPcGVuU2VzYW1l'
+hello world
+```
+
+# Configure your firewall
+
+Between OpenFaaS and Kong a lot of ports are exposed on your host machine. Most importantly you should hide port 8080 since that is where OpenFaaS's functions live which you were trying to secure in the first place. In the end it is best to only expose either 8000 or 8443 out of your network depending if you added SSL or not.
+
+Another option concerning port 8000 is to expose both 8000 and 8443 and enable https_only which is used to notify clients to upgrade to https from http.
