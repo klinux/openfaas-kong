@@ -120,7 +120,7 @@ curl -i -X POST \
     --data 'upstream_url=http://gateway:8080/system/functions'
 ```
 ### Test Configuration
-Now visit https://${INGRESS_PROXY_URL}/ui/ in your browser where you will be asked for credentials.
+Now visit (https://${INGRESS_PROXY_URL}/ui/) in your browser where you will be asked for credentials.
 
 ## Add SSL
 > This part, is the same OpenFaas doc [Original](https://github.com/openfaas/faas/blob/master/guide/kong_integration.md) 
@@ -170,4 +170,4 @@ hello world
 
 Between OpenFaaS and Kong a lot of ports are exposed on your host machine. Most importantly you should hide port 8080 since that is where OpenFaaS's functions live which you were trying to secure in the first place. In the end it is best to only expose either 8000 or 8443 out of your network depending if you added SSL or not.
 
-Another option concerning port 8000 is to expose both 8000 and 8443 and enable https_only which is used to notify clients to upgrade to https from http.
+Another option concerning port 8000 is to expose both 8000 and 8443 and enable [https_only](https://getkong.org/docs/latest/proxy/#the-https_only-property) which is used to notify clients to upgrade to https from http.
