@@ -64,6 +64,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: konga-portal
+  namespace: openfaas
 spec:
   rules:
   - host: konga.apps.netk.inf.br

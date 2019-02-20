@@ -119,6 +119,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: kong-admin
+  namespace: openfaas
 spec:
   rules:
   - host: konggw.apps.netk.inf.br
@@ -134,9 +135,10 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: kong-admin
+  namespace: openfaas
 spec:
   rules:
-  - host: kongadm.apps.netk.inf.br
+  - host: kongdm.apps.netk.inf.br
     http:
      paths:
      - path: /
