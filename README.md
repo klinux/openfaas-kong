@@ -120,7 +120,7 @@ curl -i -X POST \
     --data 'upstream_url=http://gateway:8080/system/functions'
 ```
 ### Test Configuration
-Now visit (https://${INGRESS_PROXY_URL}/ui/) in your browser where you will be asked for credentials.
+Now visit [](https://${INGRESS_PROXY_URL}/ui/) in your browser where you will be asked for credentials.
 
 ## Add SSL
 > This part, is the same OpenFaas doc [Original](https://github.com/openfaas/faas/blob/master/guide/kong_integration.md) 
