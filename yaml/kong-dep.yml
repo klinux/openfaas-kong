@@ -75,6 +75,7 @@ spec:
         name: kong-rc
         app: kong
     spec:
+      serviceAccountName: faas-controller
       containers:
       - name: kong
         image: kong:0.14.1-alpine

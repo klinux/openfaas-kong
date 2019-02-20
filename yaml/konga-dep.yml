@@ -27,6 +27,7 @@ spec:
         name: konga
         app: konga
     spec:
+      serviceAccountName: faas-controller
       containers:
       - name: konga
         image: pantsel/konga:legacy

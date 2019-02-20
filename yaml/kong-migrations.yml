@@ -8,6 +8,7 @@ spec:
     metadata:
       name: kong-migration
     spec:
+      serviceAccountName: faas-controller
       containers:
       - name: kong-migration
         image: kong:0.14.1-alpine
