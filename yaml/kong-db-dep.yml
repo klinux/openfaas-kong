@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:9.6
+          image: postgres:9.5
           env:
             - name: POSTGRES_USER
               value: kong
