@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
       - name: kong-migration
-        image: kong
+        image: kong:0.14.1-alpine
         imagePullPolicy: IfNotPresent
         env:
           - name: KONG_NGINX_DAEMON
