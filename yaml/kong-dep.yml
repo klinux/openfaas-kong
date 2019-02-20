@@ -68,8 +68,6 @@ metadata:
   name: kong-rc
   namespace: openfaas
 spec:
-  securityContext:
-    runAsUser: 1000
   replicas: 3
   template:
     metadata:
