@@ -18,6 +18,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: konga
+  namespace: openfaas
 spec:
   replicas: 3
   template:
@@ -25,7 +26,6 @@ spec:
       labels:
         name: konga
         app: konga
-      namespace: openfaas
     spec:
       containers:
       - name: konga
