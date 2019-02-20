@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: kong-migration
+  namespace: openfaas
 spec:
   template:
     metadata:
