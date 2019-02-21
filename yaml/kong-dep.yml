@@ -78,8 +78,10 @@ spec:
       serviceAccountName: faas-controller
       containers:
       - name: kong
-        image: kong:0.14.1-alpine
+        image: kong
         imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
         env:
           - name: KONG_ADMIN_LISTEN
             value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"

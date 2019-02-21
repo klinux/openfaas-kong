@@ -30,8 +30,10 @@ spec:
       serviceAccountName: faas-controller
       containers:
       - name: konga
-        image: pantsel/konga:legacy
+        image: pantsel/konga
         imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
         env:
           - name: TOKEN_SECRET
             value: "05a8d106c70fa9eabee35b25a4fa9d85"

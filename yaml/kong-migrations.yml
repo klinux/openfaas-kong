@@ -11,7 +11,7 @@ spec:
       serviceAccountName: faas-controller
       containers:
       - name: kong-migration
-        image: kong:0.14.1-alpine
+        image: kong
         imagePullPolicy: IfNotPresent
         env:
           - name: KONG_NGINX_DAEMON
@@ -20,5 +20,5 @@ spec:
             value: kong
           - name: KONG_PG_HOST
             value: postgres
-        command: [ "/bin/sh", "-c", "kong migrations up" ]
+        command: [ "/bin/sh", "-c", "kong migrations bootstrap" ]
       restartPolicy: Never
