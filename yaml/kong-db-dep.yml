@@ -28,7 +28,7 @@ spec:
       serviceAccountName: faas-controller
       containers:
         - name: postgres
-          image: postgres:9.5
+          image: postgres:9.6
           imagePullPolicy: IfNotPresent
           env:
             - name: POSTGRES_USER
