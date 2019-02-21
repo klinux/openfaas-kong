@@ -36,27 +36,37 @@ You can do this task with two ways, command line or through KONGA web interface.
 
 Here you can get with command line to configure endpoits.
 
-### Configure "/function" endpoint
+### Configure "/function" services and routes
 
 ```sh
+curl -k -X PUT \
+    https://${INGRESS_ADMIN_URL}/services/function \
+    -d 'url=http://gateway:8080/function'
+
 curl -k -X POST \
-    --url https://${INGRESS_ADMIN_URL}/apis/ \
-    --data 'name=function' \
-    --data 'uris=/function' \
-    --data 'upstream_url=http://gateway:8080/function'
+    https://${INGRESS_ADMIN_URL}/services/function/routes \
+    -d 'name=function' \
+    -d 'protocols=http' \
+    -d 'hosts=gateway'
 ```
 
-### Configure "/async-function" endpoint
+### Configure "/async-function" services and routes
 
 ```sh
+curl -k -X PUT \
+    https://${INGRESS_ADMIN_URL}/services/async-function \
+    -d 'url=http://gateway:8080/async-function'
+
 curl -k -X POST \
-    --url https://${INGRESS_ADMIN_URL}/apis/ \
-    --data 'name=async-function' \
-    --data 'uris=/async-function' \
-    --data 'upstream_url=http://gateway:8080/async-function'
+    https://${INGRESS_ADMIN_URL}/services/async-function/routes \
+    -d 'name=async-function' \
+    -d 'protocols=http' \
+    -d 'hosts=gateway'
 ```
 
 > The -k options in curl is necessary if you are using self-signed certificates.
+
+> Kong Admin API only supports authentication in enterprise edition, so, as best practice, don't publish kong adm Ingress, use KONG to manage kong adm.
 
 ### Enable basic authentication
 Kong support a lot of authentication methods, like basic, api key, oauth2, jwt etc.  
@@ -66,33 +76,33 @@ To simplify this deploy, we will use basic authentication.
 
 ```sh
 curl -k -X POST https://${INGRESS_ADMIN_URL}/plugins \
-    --data "name=basic-auth" \
-    --data "config.hide_credentials=true"
+    -d 'name=basic-auth' \
+    -d 'config.hide_credentials=true'
 ```
 
 ### Create a cunsumer
 
 ```sh
-curl -k -d "username=aladdin" https://${INGRESS_ADMIN_URL}/consumers/
+curl -k https://${INGRESS_ADMIN_URL}/consumers/ -d 'username=Aladdin'
 ```
 
 ### Create a credential
 
 ```sh
 curl -k -X POST https://${INGRESS_ADMIN_URL}/consumers/aladdin/basic-auth \
-    --data "username=aladdin" \
-    --data "password=OpenSesame"
+    -d 'username=Aladdin' \
+    -d 'password=OpenSesame'
 ```
 
 ### Validate configuration
 
 ```sh
 $ curl -k https://${INGRESS_PROXY_URL}/function/func_echoit -d 'hello world'
-{"message":"Unauthorized"}
+{"message": "Unauthorized"}
 
 $ curl -k https://${INGRESS_PROXY_URL}/function/func_echoit -d 'hello world' \
 -H 'Authorization: Basic xxxxxx'
-{"message":"Invalid authentication credentials"}
+{"message": "Invalid authentication credentials"}
 
 $ echo -n aladdin:OpenSesame | base64
 YWxhZGRpbjpPcGVuU2VzYW1l
@@ -105,19 +115,28 @@ hello world
 ### Configure the "/ui" endpoint, to access the UI of OpenFaas
 
 ```sh
-curl -i -k -X POST \
-    --url https://${INGRESS_ADMIN_URL}/apis/ \
-    --data 'name=ui' \
-    --data 'uris=/ui' \
-    --data 'upstream_url=http://gateway:8080/ui'
+curl -k -X PUT \
+    https://${INGRESS_ADMIN_URL}/services/ui \
+    -d 'url=http://gateway:8080/ui'
+
+curl -k -X POST \
+    https://${INGRESS_ADMIN_URL}/services/ui/routes \
+    -d 'name=ui' \
+    -d 'protocols=http' \
+    -d 'hosts=gateway'
 ```
 
 ```sh
-curl -i -X POST \
-    --url https://${INGRESS_ADMIN_URL}/apis/ \
-    --data 'name=system-functions' \
-    --data 'uris=/system/functions' \
-    --data 'upstream_url=http://gateway:8080/system/functions'
+
+curl -k -X PUT \
+    https://${INGRESS_ADMIN_URL}/services/system-functions \
+    -d 'url=http://gateway:8080/system/functions'
+
+curl -k -X POST \
+    https://${INGRESS_ADMIN_URL}/services/system-functions/routes \
+    -d 'name=system-functions' \
+    -d 'protocols=http' \
+    -d 'hosts=gateway'
 ```
 ### Test Configuration
 Now visit https://${INGRESS_PROXY_URL}/ui/ in your browser where you will be asked for credentials.
