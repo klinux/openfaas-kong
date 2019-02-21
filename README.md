@@ -66,7 +66,7 @@ curl -k -X POST \
 
 > The -k options in curl is necessary if you are using self-signed certificates.
 
-> Kong Admin API only supports authentication in enterprise edition, so, as best practice, don't publish kong adm Ingress, use KONG to manage kong adm.
+> Kong Admin API only supports authentication in enterprise edition, so, as best practice, don't publish kong adm Ingress, use KONGA to manage kong adm.
 
 ### Enable basic authentication
 Kong support a lot of authentication methods, like basic, api key, oauth2, jwt etc.  
