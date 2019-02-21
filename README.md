@@ -47,7 +47,7 @@ curl -k -X POST \
     https://${INGRESS_ADMIN_URL}/services/function/routes \
     -d 'name=function' \
     -d 'protocols=http' \
-    -d 'hosts=gateway'
+    --data-urlencode 'paths[]=/function'
 ```
 
 ### Configure "/async-function" services and routes
@@ -61,7 +61,7 @@ curl -k -X POST \
     https://${INGRESS_ADMIN_URL}/services/async-function/routes \
     -d 'name=async-function' \
     -d 'protocols=http' \
-    -d 'hosts=gateway'
+    --data-urlencode 'paths[]=/async-function'
 ```
 
 > The -k options in curl is necessary if you are using self-signed certificates.
@@ -123,7 +123,7 @@ curl -k -X POST \
     https://${INGRESS_ADMIN_URL}/services/ui/routes \
     -d 'name=ui' \
     -d 'protocols=http' \
-    -d 'hosts=gateway'
+    --data-urlencode 'paths[]=/ui'
 ```
 
 ```sh
@@ -136,7 +136,7 @@ curl -k -X POST \
     https://${INGRESS_ADMIN_URL}/services/system-functions/routes \
     -d 'name=system-functions' \
     -d 'protocols=http' \
-    -d 'hosts=gateway'
+    --data-urlencode 'paths[]=/system/functions'
 ```
 ### Test Configuration
 Now visit https://${INGRESS_PROXY_URL}/ui/ in your browser where you will be asked for credentials.
