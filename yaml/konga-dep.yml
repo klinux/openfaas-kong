@@ -50,7 +50,7 @@ spec:
           - name: DB_DATABASE
             value: postgres
           - name: NODE_ENV
-            value: production
+            value: developer
         ports:
         - name: kong-svc
           containerPort: 1337
